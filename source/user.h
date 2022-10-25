@@ -17,9 +17,9 @@ class User {
         User(string u, string p, double b);
 
         // getters
-        string getUserName() const;
-        string getPublicKey() const {return this->publicKey;}
-        double getBalance() const {return this->balance;}
+        string getUserName();
+        string getPublicKey();
+        double getBalance();
 
         // setters
         void setUserName(const string s);

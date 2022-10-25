@@ -4,29 +4,27 @@ User::User(string u, string p, double b){
     this->userName = u;
     this->publicKey = p;
     this->balance = b;
-
-    return *this;
 }
 
 // getters
-string &User::getuserName() const {
+string User::getUserName() {
     return this->userName;
 }
 
-string &User::getpublicKey() const {
+string User::getPublicKey() {
     return this->publicKey;
 }
 
-string &User::getbalance() const {
+double User::getBalance() {
     return this->balance;
 }
 
 // setters
-void User::setuserName(string s){
+void User::setUserName(string s){
     this->userName = s;
 }
 
-void setPublicKey(string s){
+void User::setPublicKey(string s){
     this->publicKey = s;
 }
 
