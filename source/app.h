@@ -1,14 +1,18 @@
+#pragma once
 #include "transaction.h"
-#include "generator.h"
+#include "transactionPool.h"
 #include "user.h"
+#include "userPool.h"
+#include "block.h"
+#include "generator.h"
 
-class App{
-    private: //
+class App {
+    private:
         int argc;
-        char **argv;
-        string argument;        
+        char** argv;
+        string argument;
 
     public:
-        void Args(int argc, char **argv);
+        void Args(int argc, char** argv);
         void run();
 };

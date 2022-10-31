@@ -10,6 +10,9 @@ hash.o: source/hash.cpp
 user.o: source/user.cpp
 	g++ -c source/user.cpp
 
+userPool.o: source/userPool.cpp
+	g++ -c source/userPool.cpp
+
 app.o: source/app.cpp
 	g++ -c source/app.cpp
 
@@ -21,6 +24,9 @@ generator.o: source/generator.cpp
 
 transaction.o: source/transaction.cpp
 	g++ -c source/transaction.cpp
+
+transactionPool.o: source/transactionPool.cpp
+	g++ -c source/transactionPool.cpp
 
 block.o: source/block.cpp
 	g++ -c source/block.cpp
