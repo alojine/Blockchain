@@ -9,14 +9,15 @@ vector<Transaction> TransactionPool::getTransactionPool() {
 
 void TransactionPool::generateTransactionPool(UserPool UserPool) {
 
+	this->Transactions.reserve(10000);
 	Transaction Transaction;
 	vector<User> Users = UserPool.getUserPool();
 
-	for (size_t i = 0; i < TRANSACTION_AMOUNT; i++) {
+	for (size_t i = 1; i <= TRANSACTION_AMOUNT; i++) {
 		Generator g;
 
-		int sender_index = g.generateInt(1, USERS);
-		int receiver_index = g.generateInt(1, USERS);
+		int sender_index = g.generateInt(1, USERS - 1);
+		int receiver_index = g.generateInt(1, USERS - 1);
 		int amount_balance = g.generateInt(1, 10000);
 
 		// Validate transaction

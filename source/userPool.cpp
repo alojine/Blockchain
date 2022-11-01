@@ -13,7 +13,7 @@ void UserPool::generateUserPool() {
 
 	srand((unsigned)time(NULL));
 
-	for (int i = 0; i < USERS; i++) {
+	for (int i = 1; i <= USERS; i++) {
 		Generator g;
 		int current_user = i + 1;
 		string UserName = to_string(current_user) + "User" + to_string(current_user);

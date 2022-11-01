@@ -1,4 +1,8 @@
 #pragma once
+#include <algorithm>
+#include <iterator>
+#include <vector>
+
 #include "transaction.h"
 #include "transactionPool.h"
 #include "user.h"

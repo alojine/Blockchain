@@ -2,24 +2,30 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <sstream>
 #include <vector>
 #include "transaction.h"
+#include "hash.h"
 using namespace std;
 
 
 class Block{
 private: 
 	string PrevBlockHash;
-	string Timestamp;
+	time_t Timestamp;
 	string Version;
 	string MerkelRootHash;
-	string Hash;
-	string DifficultyTarget;
+	string HashBlock;
+	int DifficultyTarget;
 	vector<Transaction> Transactions;
 
 public:
-	Block() { this->Timestamp = ""; }
+	Block() { this->PrevBlockHash = ""; }
 	void printBlock();
-	void createBlock(string p, string t, string v, string m, string h, string d, vector<Transaction> T);
+	void createBlock(string previous, int difficulty, vector<Transaction> T);
+	string makeMerkelTreeHash(vector<Transaction> T);
+	string makeBlockHash();
+	void createGenesis(vector<Transaction> T);
+	string getLastBlockHash();
 
 };

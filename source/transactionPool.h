@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const int TRANSACTION_AMOUNT = 10000;
+const int TRANSACTION_AMOUNT = 1000;
 
 class TransactionPool {
 private:

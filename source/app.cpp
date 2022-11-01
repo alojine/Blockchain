@@ -9,18 +9,6 @@ void App::Args(int argc, char** argv)
 
 void App::run() {
     
-    UserPool UserPool;
-    UserPool.generateUserPool();
-    
-
-    TransactionPool TransactionPool;
-    TransactionPool.generateTransactionPool(UserPool);
-    TransactionPool.printTransactionPool();
-    UserPool.clearPool();
-    TransactionPool.clearPool();
-    
-
-    /*
     Generator Generator;
 
     UserPool UserPool;
@@ -32,40 +20,33 @@ void App::run() {
     TransactionPool.generateTransactionPool(UserPool);
     vector<Transaction> Transactions(TransactionPool.getTransactionPool());
 
-    UserPool.clearPool();
-    TransactionPool.clearPool();
-
 
     Block SingleBlock;
     vector<Block> BlockChain;
     vector<Transaction> BlockTransactions;
-    */
 
-
-    /*
-    while (Transactions.size() > 1) {
-
+    int gen = 0;
+    while (gen < 5) {
         for (int j = 0; j < 100; j++) {
-            // Random transaction from transaction pool
-            int random_transaction = Generator.generateInt(1, Transactions.size());
 
-            // Transaction validation
+            // generating random transaction from Transaction pool
+            int random_transaction = Generator.generateInt(1, Transactions.size() - 1);
+            
             bool validated = false;
-
             for (int i = 0; i < Users.size(); i++) {
 
                 User sender;
                 User receiver;
-
+                int receiver_index;
                 if (Users.at(i).getUserName() == Transactions.at(random_transaction).getReceiver()) {
-                    
+                    receiver_index = i;
                 }
 
-                // check if transaction is avalible  ~sender has enough balance
+                // validating again in mining process if user has enough balance to transit
                 if (Users.at(i).getUserName() == Transactions.at(random_transaction).getSender()) {
                     if (Users.at(i).getBalance() > Transactions.at(random_transaction).getAmount()) {
 
-                        // decreasing sender amount and 
+                        // 
                         sender.setBalance(Users.at(i).getBalance() - Transactions.at(random_transaction).getAmount());
                         sender.setPublicKey(Users.at(i).getPublicKey());
                         sender.setUserName(Users.at(i).getUserName());
@@ -74,26 +55,65 @@ void App::run() {
                         validated = true;
                     }
                 }
+
+                if (validated) {
+                    receiver.setBalance(Users.at(receiver_index).getBalance() + Transactions.at(random_transaction).getAmount());
+                    receiver.setPublicKey(Users.at(receiver_index).getPublicKey());
+                    receiver.setUserName(Users.at(receiver_index).getUserName());
+                    Users.at(receiver_index) = receiver;
+                }
+
             }
 
-            while (validated) {
-                // resizing TransactionPool
-                Transactions.shrink_to_fit();
+            // final push
+            BlockTransactions.push_back(Transactions.at(random_transaction));
 
-                // pushing trannaction to user
-                BlockTransactions.push_back(Transactions.at(random_transaction));
-            }
+            // removing transaction from pool
             
-            
-            
+           
+            Transactions.shrink_to_fit();
         }
 
+        if (gen == 0) {
+            SingleBlock.createGenesis(BlockTransactions);
+        }
+        else {
+            SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), BlockChain.size(), BlockTransactions);
+        }
+        BlockChain.push_back(SingleBlock);
+
+        gen++;
+        BlockTransactions.clear();
+        SingleBlock.printBlock();
+    }
+
+    // commands
+    string com;
+    cout << endl;
+    
+    com = "0";
+    while (com != "--ed") {
+        cout << "Command line";
+        cin >> com;
+
+        // print blockchain
+        if (com == "--bc") {
+            for (auto a : BlockChain) {
+                a.printBlock();
+            }
+        }
+        
+        // print user pool
+        if (com == "--up") {
+            UserPool.printUserPool();
+        }
+
+        // print transaction pool
+        if (com == "--tp") {
+            TransactionPool.printTransactionPool();
+        }
 
     }
 
-    for (auto a : BlockTransactions) {
-        cout << a.getAmount() << endl;
-    }
-    */
 
 };
