@@ -26,8 +26,10 @@ void App::run() {
     vector<Transaction> BlockTransactions;
 
     int gen = 0;
-    while (gen < 5) {
-        for (int j = 0; j < 100; j++) {
+    while (Transactions.size() != 0) {
+        //for (int j = 0; j < 100; j++) {
+        while(Transactions.size() < 100){
+        
 
             // generating random transaction from Transaction pool
             int random_transaction = Generator.generateInt(1, Transactions.size() - 1);
@@ -69,9 +71,10 @@ void App::run() {
             BlockTransactions.push_back(Transactions.at(random_transaction));
 
             // removing transaction from pool
-            
-           
+            swap(Transactions.at(random_transaction), Transactions.back());
+            Transactions.pop_back();
             Transactions.shrink_to_fit();
+
         }
 
         if (gen == 0) {
