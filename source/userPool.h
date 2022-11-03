@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "user.h"
+#include "transaction.h"
 
 using namespace std;
 
@@ -20,5 +21,6 @@ public:
 	void generateUserPool();
 	void printUserPool();
 	void clearPool();
-
+	int getUserIndex(string name, vector<User> U);
+	void updateUsers(vector<Transaction> BlockTransactions);
 };

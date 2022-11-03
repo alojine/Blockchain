@@ -3,13 +3,14 @@
 #include <iomanip>
 #include <string>
 #include <vector>
-//#include <random>
+
 #include "transaction.h"
 #include "userPool.h"
+#include "user.h"
 
 using namespace std;
 
-const int TRANSACTION_AMOUNT = 1000;
+const int TRANSACTION_AMOUNT = 10000;
 
 class TransactionPool {
 private:
@@ -20,5 +21,7 @@ public:
 	void printTransactionPool();
 	vector<Transaction> getTransactionPool();
 	void clearPool();
+	vector<Transaction> useTransactions(vector<Transaction> Tp, vector<Transaction> BlockTransactions, vector<User>& Users);
+	void deleteTransactions(vector<Transaction> BlockTransactions);
 
 };

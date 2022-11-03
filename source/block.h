@@ -17,15 +17,21 @@ private:
 	string MerkelRootHash;
 	string HashBlock;
 	int DifficultyTarget;
+	int block_number;
 	vector<Transaction> Transactions;
 
 public:
 	Block() { this->PrevBlockHash = ""; }
 	void printBlock();
-	void createBlock(string previous, int difficulty, vector<Transaction> T);
+	void printBlockTransactions();
+
+	void createBlock(string previous, int difficulty, vector<Transaction> T, int nr);
+	void createGenesis(vector<Transaction> T);
+
 	string makeMerkelTreeHash(vector<Transaction> T);
 	string makeBlockHash();
-	void createGenesis(vector<Transaction> T);
+	
 	string getLastBlockHash();
-
+	string getBlockHash();
+	int getBlockNumber();
 };

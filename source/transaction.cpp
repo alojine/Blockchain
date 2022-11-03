@@ -12,11 +12,12 @@ void Transaction::createTransaction(string sender, string receiver, double amoun
 }
 
 void Transaction::printTransaction() {
-
-	cout << "TransactionId: " << this->TransactionId << endl;
-	cout << "Sender: " << this->Sender << endl;
-	cout << "Receiver: " << this->Receiver << endl;
-	cout << "Amount: " << this->Amount << endl;
+	cout << "---------------------------------------------------------------------------------------------------------------" << endl;
+	cout << left << setw(20) << "TransactionId: " << this->TransactionId << endl;
+	cout << left << setw(20) << "Sender: " << this->Sender << endl;
+	cout << left << setw(20) << "Receiver: " << this->Receiver << endl;
+	cout << left << setw(20) << "Amount: " << this->Amount << endl;
+	cout << "---------------------------------------------------------------------------------------------------------------" << endl;
 }
 
 string Transaction::getTransactionId(){
