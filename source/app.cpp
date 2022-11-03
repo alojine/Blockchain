@@ -19,93 +19,51 @@ void App::run() {
     TransactionPool TransactionPool;
     TransactionPool.generateTransactionPool(UserPool);
     vector<Transaction> Transactions(TransactionPool.getTransactionPool());
+    vector<Transaction> copyOfTransactions = Transactions;
     vector<Transaction> BlockTransactions;
 
     Block SingleBlock;
     vector<Block> BlockChain;
 
+    cout << "UserPool of 1.000[users] has been generated." << endl;
+    cout << "TransactionPool 10.000[transactions] has been generated." << endl;
+    cout << endl;
+
     int gen = 0;
-    while (Transactions.size() != 0) {
+    for (int s = 0; s < 3; s++) {
         
-        int j = 0;
-
-        int choice;
-        do {
-            
-            cout << "Mine one or all 1/0 ";
-            cin >> choice;
-
-            
-            // generating random transaction from Transaction pool
+        // Sugeneruojamos transakcijos ir idedamos i nauja vektoriu
+        for (int i = 0; i < 100; i++) {
             int random_transaction = Generator.generateInt(1, Transactions.size() - 1);
-
-            /*
-            bool validated = false;
-            for (int i = 0; i < Users.size(); i++) {
-
-                User sender;
-                User receiver;
-                int receiver_index;
-                if (Users.at(i).getUserName() == Transactions.at(random_transaction).getReceiver()) {
-                    receiver_index = i;
-                }
-
-                // validating again in mining process if user has enough balance to transit
-                if (Users.at(i).getUserName() == Transactions.at(random_transaction).getSender()) {
-                    if (Users.at(i).getBalance() > Transactions.at(random_transaction).getAmount()) {
-
-
-                        sender.setBalance(Users.at(i).getBalance() - Transactions.at(random_transaction).getAmount());
-                        sender.setPublicKey(Users.at(i).getPublicKey());
-                        sender.setUserName(Users.at(i).getUserName());
-                        Users.at(i) = sender;
-
-                        validated = true;
-                    }
-                }
-
-                if (validated) {
-                    receiver.setBalance(Users.at(receiver_index).getBalance() + Transactions.at(random_transaction).getAmount());
-                    receiver.setPublicKey(Users.at(receiver_index).getPublicKey());
-                    receiver.setUserName(Users.at(receiver_index).getUserName());
-                    Users.at(receiver_index) = receiver;
-                }
-
-                
-            }
-            */
-
-            // final push
             BlockTransactions.push_back(Transactions.at(random_transaction));
-
-            /*
-            // removing transaction from pool
-            std::swap(Transactions.at(random_transaction), Transactions.back());
+            // Deleting transactions
+            swap(Transactions.at(random_transaction), Transactions.back());
             Transactions.pop_back();
-            Transactions.shrink_to_fit();
-            */
 
+        }
+        cout << Transactions.size() << endl;
+        
 
-            j++;
-        } while (choice == 1);
-
-        if (gen == 0) {
+        // Genesis block
+        if (gen == 0)
             SingleBlock.createGenesis(BlockTransactions);
-        }
-        else {
-            SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), BlockChain.size(), BlockTransactions);
-        }
 
-        // Creating block   
+        // Regular block
+        if(gen > 0)
+            SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), BlockChain.size(), BlockTransactions, gen);
+        
+        // updating users
+        // UserPool.updateUsers(BlockTransactions);
+
+        // Adding block to chain  
         BlockChain.push_back(SingleBlock);
-
-        cout << "praejo";
-        Transactions = TransactionPool.useTransactions(Transactions, BlockTransactions, Users);
+        SingleBlock.printBlock();
 
         gen++;
         BlockTransactions.clear();
         SingleBlock.printBlock();
     }
+
 
     // commands
     string com;
@@ -113,7 +71,7 @@ void App::run() {
     
     com = "0";
     while (com != "--ed") {
-        cout << "Command line";
+        cout << "Command line: ";
         cin >> com;
 
         // print blockchain
@@ -132,6 +90,40 @@ void App::run() {
         if (com == "--tp") {
             TransactionPool.printTransactionPool();
         }
+
+        // print single block with transactions
+        if (com == "--sb") {
+            int nr; bool marker = 0;
+            cout << "Iveskite bloko nr: "; cin >> nr;
+            
+            for (auto a : BlockChain) {
+                if (a.getBlockNumber() == nr) {
+                    a.printBlock();
+                    a.printBlockTransactions();
+                    marker = 1;
+                }
+            }
+            if (!marker)
+                cout << "Blokas neegzisutoja!" << endl;
+
+        }
+
+        // print transaction info
+        if (com == "--tr") {
+            string id; bool marker = 0;
+            string crId;
+            cout << "Iveskite transakcijos id: "; cin >> id;
+            for (auto a : copyOfTransactions) {
+                //crId = *a.getSender().erase((remove(a.getSender().begin(), a.getSender().end(), ' '), a.getSender().end()));
+                if (a.getSender() == id) {
+                    a.printTransaction();
+                    marker = 1;
+                }
+            }
+            if (!marker)
+                cout << "Transakcija neegzistuoja!" << endl;
+        }
+
 
     }
 
