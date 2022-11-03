@@ -19,21 +19,27 @@ void App::run() {
     TransactionPool TransactionPool;
     TransactionPool.generateTransactionPool(UserPool);
     vector<Transaction> Transactions(TransactionPool.getTransactionPool());
-
+    vector<Transaction> BlockTransactions;
 
     Block SingleBlock;
     vector<Block> BlockChain;
-    vector<Transaction> BlockTransactions;
 
     int gen = 0;
     while (Transactions.size() != 0) {
-        //for (int j = 0; j < 100; j++) {
-        while(Transactions.size() < 100){
         
+        int j = 0;
 
+        int choice;
+        do {
+            
+            cout << "Mine one or all 1/0 ";
+            cin >> choice;
+
+            
             // generating random transaction from Transaction pool
             int random_transaction = Generator.generateInt(1, Transactions.size() - 1);
-            
+
+            /*
             bool validated = false;
             for (int i = 0; i < Users.size(); i++) {
 
@@ -48,7 +54,7 @@ void App::run() {
                 if (Users.at(i).getUserName() == Transactions.at(random_transaction).getSender()) {
                     if (Users.at(i).getBalance() > Transactions.at(random_transaction).getAmount()) {
 
-                        // 
+
                         sender.setBalance(Users.at(i).getBalance() - Transactions.at(random_transaction).getAmount());
                         sender.setPublicKey(Users.at(i).getPublicKey());
                         sender.setUserName(Users.at(i).getUserName());
@@ -65,17 +71,23 @@ void App::run() {
                     Users.at(receiver_index) = receiver;
                 }
 
+                
             }
+            */
 
             // final push
             BlockTransactions.push_back(Transactions.at(random_transaction));
 
+            /*
             // removing transaction from pool
-            swap(Transactions.at(random_transaction), Transactions.back());
+            std::swap(Transactions.at(random_transaction), Transactions.back());
             Transactions.pop_back();
             Transactions.shrink_to_fit();
+            */
 
-        }
+
+            j++;
+        } while (choice == 1);
 
         if (gen == 0) {
             SingleBlock.createGenesis(BlockTransactions);
@@ -83,7 +95,12 @@ void App::run() {
         else {
             SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), BlockChain.size(), BlockTransactions);
         }
+
+        // Creating block   
         BlockChain.push_back(SingleBlock);
+
+        cout << "praejo";
+        Transactions = TransactionPool.useTransactions(Transactions, BlockTransactions, Users);
 
         gen++;
         BlockTransactions.clear();
@@ -117,6 +134,5 @@ void App::run() {
         }
 
     }
-
 
 };

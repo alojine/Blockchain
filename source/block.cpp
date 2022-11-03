@@ -1,12 +1,12 @@
 #include "block.h"
 
 void Block::printBlock() {
-	cout << "PreviousBlockHash: " << this->PrevBlockHash << endl;
-	cout << "Timestamp: " << this->Timestamp << endl;
-	cout << "Version: " << this->Version << endl;
-	cout << "MerkelRootHash: " << this->MerkelRootHash << endl;
-	cout << "Hash: " << this->HashBlock << endl;
-	cout << "DifficultyTarget: " << this->DifficultyTarget << endl;
+	cout << left << setw(19) << "PreviousBlockHash:" << this->PrevBlockHash << endl;
+	cout << left << setw(20) << "Timestamp: " << this->Timestamp << endl;
+	cout << left << setw(20) << "Version: " << this->Version << endl;
+	cout << left << setw(19) << "MerkelRootHash:" << this->MerkelRootHash << endl;
+	cout << left << setw(19) << "Hash:" << this->HashBlock << endl;
+	cout << left << setw(20) << "DifficultyTarget: " << this->DifficultyTarget << endl;
 	cout << endl;
 }
 
