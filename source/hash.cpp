@@ -140,11 +140,16 @@ const string& Hash::makeHash(string s)
 
     // 7. converting binary to hex
     cnv = binToHex(cnv);
-    for (size_t i = 0; i < 63; i++) {
+    for (size_t i = 0; i < 65; i++) {
         str_ += cnv.at(i);
     }
     
-    return str_;
+    string return_string;
+    for (size_t i = 1; i < 65; i++) {
+        return_string += str_.at(i);
+    }
+    
+    return return_string;
 };
 
 string Hash::binToHex(string s)

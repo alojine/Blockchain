@@ -39,7 +39,9 @@ void UserPool::clearPool() {
 	this->Users.clear();
 }
 
+
 int UserPool::getUserIndex(string name, vector<User> U) {
+
 	int userIndex = 0;
 	for (int i = 1; i <= U.size(); i++) {
 		if (U.at(i).getUserName() == name) {
@@ -52,23 +54,21 @@ int UserPool::getUserIndex(string name, vector<User> U) {
 	return userIndex;
 }
 
+
 void UserPool::updateUsers(vector<Transaction> BlockTransactions) {
 	
-	for (int i = 1; i <= BlockTransactions.size(); i++) {
+	int size = this->Users.size();
+
+	for (int i = 0; i < BlockTransactions.size(); i++) {
 
 		User sender;
 		User receiver;
 
-		for (int j = 1; j < this->Users.size(); j++) {
+		int sender_index = getUserIndex(BlockTransactions.at(i).getSender(), this->Users);
+		int receiver_index = getUserIndex(BlockTransactions.at(i).getReceiver(), this->Users);
 
-			if (BlockTransactions.at(i).getSender() == this->Users.at(j).getUserName()) {
-				this->Users.at(j).setBalance(this->Users.at(j).getBalance() - BlockTransactions.at(i).getAmount());
-			}
-
-			if (BlockTransactions.at(i).getReceiver() == this->Users.at(j).getUserName()) {
-				this->Users.at(j).setBalance(this->Users.at(j).getBalance() + BlockTransactions.at(i).getAmount());
-			}
-		}
+		this->Users.at(sender_index).setBalance(this->Users.at(sender_index).getBalance() - BlockTransactions.at(i).getAmount());
+		this->Users.at(receiver_index).setBalance(this->Users.at(receiver_index).getBalance() + BlockTransactions.at(i).getAmount());
 
 	}
 }

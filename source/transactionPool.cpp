@@ -127,6 +127,7 @@ vector<Transaction> TransactionPool::useTransactions(vector<Transaction> Tp, vec
 
 void TransactionPool::deleteTransactions(vector<Transaction> BlockTransactions) {
 
+
 	for (int i = 1; i <= BlockTransactions.size(); i++) {
 
 		for (int j = 1; j <= this->Transactions.size(); j++) {
