@@ -30,12 +30,13 @@ void App::run() {
     cout << endl;
 
     int gen = 0;
-    for (int s = 0; s < 3; s++) {
+    for (int s = 0; s < 6; s++) {
         
         // Sugeneruojamos transakcijos ir idedamos i nauja vektoriu
         for (int i = 0; i < 100; i++) {
             int random_transaction = Generator.generateInt(1, Transactions.size() - 1);
             BlockTransactions.push_back(Transactions.at(random_transaction));
+
             // Deleting transactions
             swap(Transactions.at(random_transaction), Transactions.back());
             Transactions.pop_back();
@@ -53,7 +54,7 @@ void App::run() {
             SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), BlockChain.size(), BlockTransactions, gen);
         
         // updating users
-        // UserPool.updateUsers(BlockTransactions);
+        UserPool.updateUsers(BlockTransactions);
 
         // Adding block to chain  
         BlockChain.push_back(SingleBlock);
@@ -108,14 +109,12 @@ void App::run() {
 
         }
 
-        // print transaction info
         if (com == "--tr") {
             string id; bool marker = 0;
             string crId;
             cout << "Iveskite transakcijos id: "; cin >> id;
             for (auto a : copyOfTransactions) {
-                //crId = *a.getSender().erase((remove(a.getSender().begin(), a.getSender().end(), ' '), a.getSender().end()));
-                if (a.getSender() == id) {
+                if (a.getTransactionId() == id) {
                     a.printTransaction();
                     marker = 1;
                 }
