@@ -19,4 +19,9 @@ class App {
     public:
         void Args(int argc, char** argv);
         void run();
+        void mineAll();
+        void mineAmount();
+        void stats(vector<User> Users, vector<User> copyOfUsers);
 };
+
+// UserPool UserPool, vector<User> Users, 
