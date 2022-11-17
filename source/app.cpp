@@ -37,13 +37,13 @@ void App::run() {
     int amount;
     cout << "number - amount of blocks to be mined." << endl;
     cout << "0 - all blocks to be mined" << endl;
-    cout << "Number of block to be mined: "; cin >> amount;
+    cout << "[1 - 1000] of block to be mined: "; cin >> amount;
 
     if (amount == 0) {
         
 
             int FullBlockTransactions = Transactions.size() / 100;
-            int LeftTransactions = Transactions.size() - FullBlockTransactions;
+            int LeftTransactions = (Transactions.size() - FullBlockTransactions * 100) - 1;
 
             int gen = 0;
             for (int s = 0; s < FullBlockTransactions; s++) {
@@ -58,16 +58,19 @@ void App::run() {
                     Transactions.pop_back();
 
                 }
-                cout << Transactions.size() << endl;
+                cout << "Transakciju poole liko: " << Transactions.size() << endl;
 
 
                 // Genesis block
                 if (gen == 0)
-                    SingleBlock.createGenesis(BlockTransactions);
+                    SingleBlock.createGenesis(BlockTransactions, d);
 
                 // Regular block
-                if (gen > 0)
-                    SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), BlockChain.size(), BlockTransactions, gen);
+                if (gen > 0) {
+                    SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), 0, BlockTransactions, gen);
+                }
+                
+                
 
                 // updating users
                 Users.clear();
@@ -103,11 +106,11 @@ void App::run() {
 
             // Genesis block
             if (gen == 0)
-                SingleBlock.createGenesis(BlockTransactions);
+                SingleBlock.createGenesis(BlockTransactions, d);
 
             // Regular block
             if (gen > 0)
-                SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), BlockChain.size(), BlockTransactions, gen);
+                SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), d, BlockTransactions, gen);
 
             // updating users
             Users.clear();
@@ -139,23 +142,27 @@ void App::run() {
                 Transactions.pop_back();
 
             }
-            cout << Transactions.size() << endl;
+            cout << "Transakciju poole liko: " << Transactions.size() << endl;
 
 
             // Genesis block
-            if (gen == 0)
-                SingleBlock.createGenesis(BlockTransactions);
+            if (gen == 0) {
+                SingleBlock.createGenesis(BlockTransactions, d);
+            }
+                
 
             // Regular block
-            if (gen > 0)
-                SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), BlockChain.size(), BlockTransactions, gen);
-
+            if (gen > 0) {
+                SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), d, BlockTransactions, gen);
+                SingleBlock.mine();
+            }
+ 
             // updating users
             Users.clear();
             UserPool.updateUsers(BlockTransactions);
             Users = UserPool.getUserPool();
 
-            // Adding block to chain  
+            // Adding block to chain
             BlockChain.push_back(SingleBlock);
 
             gen++;
@@ -223,14 +230,184 @@ void App::run() {
         }
 
         if (com == "--st") {
-
             stats(Users, copyOfUsers);
         }
 
 
     }
 
+    
+
+
 };
+
+void App::five() {
+    Generator Generator;
+
+    UserPool UserPool;
+    UserPool.generateUserPool();
+    vector<User> Users(UserPool.getUserPool());
+    vector<User> copyOfUsers = Users;
+
+
+    TransactionPool TransactionPool;
+    TransactionPool.generateTransactionPool(UserPool);
+    vector<Transaction> Transactions(TransactionPool.getTransactionPool());
+    vector<Transaction> copyOfTransactions = Transactions;
+    vector<Transaction> BlockTransactions;
+
+    Block SingleBlock;
+    vector<Block> BlockChain;
+
+
+    cout << "UserPool of 1.000[users] has been generated." << endl;
+    cout << "TransactionPool 10.000[transactions] has been generated." << endl;
+    cout << "--------------------------------------------------------------" << endl;
+    int amount; int gen = 0;
+
+    for (size_t i = 0; i < 5; i++) {
+
+        // Sugeneruojamos transakcijos ir idedamos i nauja vektoriu
+        for (int i = 0; i < 100; i++) {
+            int random_transaction = Generator.generateInt(1, Transactions.size() - 1);
+            BlockTransactions.push_back(Transactions.at(random_transaction));
+
+            // Deleting transactions
+            swap(Transactions.at(random_transaction), Transactions.back());
+            Transactions.pop_back();
+
+        }
+        cout << "Transakciju poole liko: " << Transactions.size() << endl;
+
+        // Genesis block
+        if (gen == 0) {
+            SingleBlock.createGenesis(BlockTransactions, d);
+            BlockTransactions.clear();
+        }
+
+        // Regular block
+        if (gen > 0) {
+            SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), d, BlockTransactions, gen);
+            BlockTransactions.clear();
+
+            
+        }
+
+        // Adding block to chain
+        BlockChain.push_back(SingleBlock);
+
+        gen++;
+    }
+
+    /*
+    // Random block randidates --------------------------------
+    int count = 0;
+    vector <int> pos;
+    do {
+        int random_position = Generator.generateInt(1, 5);
+        for (auto check : pos) {
+            if (check != random_position) {
+                pos.push_back(random_position);
+                count++;
+            }
+        }
+    } while (count < 5);
+    //------------------------------------------------------
+    */
+
+    vector<int> p = { 2, 3, 4, 1, 5 };
+    
+   /*
+        for (auto c : p) {
+            BlockChain.at(c).mine();
+            if (BlockChain.at(c).mined()) {
+
+                // updating users
+                Users.clear();
+                UserPool.updateUsers(BlockTransactions);
+                Users = UserPool.getUserPool();
+
+                // Adding block to chain
+                BlockChain.push_back(SingleBlock);
+
+                //BlockTransactions.clear();
+                SingleBlock.printBlock();
+
+                break;
+            }
+            else {
+                cout << "Blokas " << c << " per duota bandymu skaiciu nebuvo iskastas" << endl;
+            }
+        }
+   */
+    
+    
+
+
+    // commands
+    string com;
+    cout << endl;
+
+    com = "0";
+    while (com != "--ed") {
+        cout << "Command line: ";
+        cin >> com;
+
+        // print blockchain
+        if (com == "--bc") {
+            for (auto a : BlockChain) {
+                a.printBlock();
+            }
+        }
+
+        // print user pool
+        if (com == "--up") {
+            UserPool.printUserPool();
+        }
+
+        // print transaction pool
+        if (com == "--tp") {
+            TransactionPool.printTransactionPool();
+        }
+
+        // print single block with transactions
+        if (com == "--sb") {
+            string nr; bool marker = 0;
+            cout << "Type in block hash: "; cin >> nr;
+
+            for (auto a : BlockChain) {
+                if (a.getBlockHash() == nr) {
+                    a.printBlock();
+                    a.printBlockTransactions();
+                    marker = 1;
+                }
+            }
+            if (!marker)
+                cout << "Block doesn't exist!" << endl;
+
+        }
+
+        if (com == "--tr") {
+            string id; bool marker = 0;
+            string crId;
+            cout << "Type in transaction ID: "; cin >> id;
+            for (auto a : copyOfTransactions) {
+                if (a.getTransactionId() == id) {
+                    a.printTransaction();
+                    marker = 1;
+                }
+            }
+            if (!marker)
+                cout << "Transaction doesn't exist!" << endl;
+        }
+
+        if (com == "--st") {
+            stats(Users, copyOfUsers);
+        }
+
+
+    }
+}
 
 void App::stats(vector<User> Users, vector<User> copyOfUsers) {
     int wBefore = 0, wAfter = 0;
@@ -255,30 +432,17 @@ void App::stats(vector<User> Users, vector<User> copyOfUsers) {
         cAfter += Users.at(i).getBalance();
     }
     cout << endl;
-    cout << "------------------------------------------------------------------------------------------------------------------" << endl;
-    cout << "Wealthiest" << endl;
-    cout << copyOfUsers.at(wBefore).getUserName() << " " << copyOfUsers.at(wBefore).getBalance() << "$" << endl;
-    cout << "Poorest" << endl;
-    cout << copyOfUsers.at(pBefore).getUserName() << " " << copyOfUsers.at(pBefore).getBalance() << "$" << endl;
+    cout << "---------------------------------------------Before transactions and updates--------------------------------------" << endl;
+    cout << "Wealthiest: " << copyOfUsers.at(wBefore).getUserName() << " " << long(copyOfUsers.at(wBefore).getBalance()) << "$" << endl;
+    cout << "Poorest: " << copyOfUsers.at(pBefore).getUserName() << " " << copyOfUsers.at(pBefore).getBalance() << "$" << endl;
     cout << "Money in circulation: " << cBefore << "$" << endl;
     cout << "------------------------------------------------------------------------------------------------------------------" << endl;
     cout << endl;
-    cout << "Transactions were made!" << endl;
-    cout << endl;
-    cout << "------------------------------------------------------------------------------------------------------------------" << endl;
-    cout << "Wealthiest" << endl;
-    cout << Users.at(wAfter).getUserName() << " " << Users.at(wAfter).getBalance() << "$" << endl;
-    cout << "Poorest" << endl;
-    cout << Users.at(pAfter).getUserName() << " " << Users.at(pAfter).getBalance() << "$" << endl;
+
+    cout << "---------------------------------------------After transactions and updates---------------------------------------" << endl;
+    cout << "Wealthiest: " << Users.at(wAfter).getUserName() << " " << long(Users.at(wAfter).getBalance()) << "$" << endl;
+    cout << "Poorest: " << Users.at(pAfter).getUserName() << " " << Users.at(pAfter).getBalance() << "$" << endl;
     cout << "Money in circulation: " << cAfter << "$" << endl;
     cout << "------------------------------------------------------------------------------------------------------------------" << endl;
     cout << endl;
 }
-
-void mineAmount() {
-
-};
-
-void mineAll() {
-
-};

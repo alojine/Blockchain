@@ -6,6 +6,9 @@
 #include <vector>
 #include "transaction.h"
 #include "hash.h"
+#include "merkel.h"
+#include "sha256.h"
+
 using namespace std;
 
 
@@ -18,7 +21,10 @@ private:
 	string HashBlock;
 	int DifficultyTarget;
 	int block_number;
+	int transactionAmount;
 	vector<Transaction> Transactions;
+	int Nonce;
+	bool Mined = false;
 
 public:
 	Block() { this->PrevBlockHash = ""; }
@@ -26,7 +32,8 @@ public:
 	void printBlockTransactions();
 
 	void createBlock(string previous, int difficulty, vector<Transaction> T, int nr);
-	void createGenesis(vector<Transaction> T);
+	void createGenesis(vector<Transaction> T, int difficulty);
+	void mine();
 
 	string makeMerkelTreeHash(vector<Transaction> T);
 	string makeBlockHash();
@@ -34,4 +41,5 @@ public:
 	string getLastBlockHash();
 	string getBlockHash();
 	int getBlockNumber();
+	bool mined();
 };
