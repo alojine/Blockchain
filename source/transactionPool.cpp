@@ -49,80 +49,18 @@ void TransactionPool::clearPool() {
 	this->Transactions.clear();
 }
 
-vector<Transaction> TransactionPool::useTransactions(vector<Transaction> Tp, vector<Transaction> BlockTransactions, vector<User>& Users) {
+vector<Transaction> TransactionPool::useTransactions(vector<Transaction> BlockTransactions) {
 	
-	for (int i = 0; i < BlockTransactions.size(); i++) {
-		cout << "ilindo i pirma cikla" << endl;
-		bool t = 0;
-		User sender;
-		User receiver;
+	for (int i = 0; i < this->Transactions.size(); i++){
+		for (auto b : BlockTransactions) {
 
-		for (int j = 1; j <= Tp.size(); j++) {
-			
+			if (Transactions.at(i).getTransactionId() == b.getTransactionId()) {
+				swap(Transactions.at(i), Transactions.back());
+				Transactions.pop_back();
+			}
 		}
-		/*
-		for (int j = 1; j <= Tp.size(); j++) {
-			cout << "ilindo i antra cikla" << endl;
-
-			if (Tp.at(j).getTransactionId() == BlockTransactions.at(i).getTransactionId()) {
-
-				int transactionToDelete = j;
-				t = 1;
-
-
-
-				for (int k = 1; k <= Users.size(); k++) {
-					cout << "ilindo i trecia cikla" << endl;
-					if (Users.at(k).getUserName() == BlockTransactions.at(i).getSender()) {
-						sender = Users.at(k);
-						s = 1;
-
-						// Balance
-						sender.setBalance(Users.at(k).getBalance() - BlockTransactions.at(i).getAmount());
-						// Username
-						sender.setUserName(Users.at(k).getUserName());
-						// Public Key
-						sender.setPublicKey(Users.at(k).getPublicKey());
-
-						Users.at(k) = sender;
-						cout << "--------------------sender found" << endl;
-					}
-
-					if (Users.at(k).getUserName() == BlockTransactions.at(i).getReceiver()) {
-						receiver = Users.at(k);
-
-
-						// Balance
-						receiver.setBalance(Users.at(k).getBalance() + BlockTransactions.at(i).getAmount());
-						// Username
-						receiver.setUserName(Users.at(k).getUserName());
-						// Public Key
-						receiver.setPublicKey(Users.at(k).getPublicKey());
-
-						Users.at(k) = receiver;
-						cout << "--------------------receiver found" << endl;
-
-					}
-
-
-				}
-
-
-
-				/*
-				if (t) {
-					std::swap(Tp.at(transactionToDelete), Tp.back());
-					Tp.pop_back();
-					Tp.shrink_to_fit();
-				}
-				*/
-
-
-
 	}
-
-
-	return Tp;
+	
 }
 
 void TransactionPool::deleteTransactions(vector<Transaction> BlockTransactions) {
@@ -139,4 +77,31 @@ void TransactionPool::deleteTransactions(vector<Transaction> BlockTransactions) 
 
 		}
 	}
+}
+
+void TransactionPool::validate(vector<Transaction> BlockTransactions) {
+	
+	int check = 1;
+	SHA256 sha256;
+	for (auto t : BlockTransactions) {
+
+		Hash h;
+		if (sha256(t.getSender() + t.getReceiver() + to_string(t.getAmount())) == t.getTransactionId()) {
+			check++;
+		}
+		/*
+		for (int i = 1; i <= Transactions.size(); i++) {
+			if (t.getTransactionId() == Transactions.at(i).getTransactionId()) {
+				swap(Transactions.at(i), Transactions.back());
+				Transactions.pop_back();
+			}
+		}
+		*/
+
+	}
+
+	
+	if (!(check == BlockTransactions.size()))
+		cout << "Transactions validated!" << endl;
+	
 }

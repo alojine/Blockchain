@@ -279,11 +279,6 @@ void App::five() {
         for (int i = 0; i < 100; i++) {
             int random_transaction = Generator.generateInt(1, Transactions.size() - 1);
             BlockTransactions.push_back(Transactions.at(random_transaction));
-
-            // Deleting transactions
-            swap(Transactions.at(random_transaction), Transactions.back());
-            Transactions.pop_back();
-
         }
 
         cout << "Transakciju poole liko: " << Transactions.size() << endl;
@@ -296,6 +291,12 @@ void App::five() {
         SingleBlock.mine();
 
         if (SingleBlock.mined()) {
+
+            // updating transactions
+            Transactions.clear();
+            TransactionPool.useTransactions(BlockTransactions);
+            Transactions = TransactionPool.getTransactionPool();
+
             // updating users
             Users.clear();
             UserPool.updateUsers(BlockTransactions);

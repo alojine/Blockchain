@@ -7,6 +7,7 @@
 #include "transaction.h"
 #include "userPool.h"
 #include "user.h"
+#include "sha256.h"
 
 using namespace std;
 
@@ -21,7 +22,8 @@ public:
 	void printTransactionPool();
 	vector<Transaction> getTransactionPool();
 	void clearPool();
-	vector<Transaction> useTransactions(vector<Transaction> Tp, vector<Transaction> BlockTransactions, vector<User>& Users);
+	vector<Transaction> useTransactions(vector<Transaction> BlockTransactions);
 	void deleteTransactions(vector<Transaction> BlockTransactions);
+	void validate(vector<Transaction> BlockTransactions);
 
 };
