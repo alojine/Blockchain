@@ -21,16 +21,32 @@ void Block::printBlockTransactions() {
 	}
 }
 
-void Block::createBlock(string previous, int difficulty, vector<Transaction> T, int nr) {
-	this->Transactions = T;
-	this->PrevBlockHash = previous;
-	this->Timestamp = time(nullptr);
-	this->Version = "1";
-	this->DifficultyTarget = difficulty;
-	this->MerkelRootHash = makeMerkelTreeHash(Transactions);
-	this->HashBlock = makeBlockHash();
-	this->block_number = nr + 1;
-	this->transactionAmount = this->Transactions.size();
+void Block::createBlock(int nr, int difficulty, vector<Transaction> T, vector<Block> bc) {
+	if (bc.size() == 0) {
+		Hash hash;
+		this->Transactions = T;
+		this->PrevBlockHash = hash.makeHash("genesisBlock");
+		this->Timestamp = time(nullptr);
+		this->Version = "1";
+		this->DifficultyTarget = difficulty;
+		this->MerkelRootHash = makeMerkelTreeHash(Transactions);
+		this->HashBlock = makeBlockHash();
+		this->block_number = 1;
+		this->transactionAmount = this->Transactions.size();
+		this->Nonce = 1;
+	}
+	else {
+		this->Transactions = T;
+		this->PrevBlockHash = bc.back().getLastBlockHash();
+		this->Timestamp = time(nullptr);
+		this->Version = "1";
+		this->DifficultyTarget = difficulty;
+		this->MerkelRootHash = makeMerkelTreeHash(Transactions);
+		this->HashBlock = makeBlockHash();
+		this->block_number = nr + 1;
+		this->transactionAmount = this->Transactions.size();
+	}
+	
 }
 
 void Block::createGenesis(vector<Transaction> T, int difficulty) {
@@ -60,46 +76,18 @@ void Block::mine() {
 		refactoredHash.at(i) = '0';
 	}
 	
-	// kasamas tol kol iskasamas
-	/*
-	while (!Mined) {
-		if (guess != refactoredHash) {
-			nonce++;
-
-			stringstream stream;
-			stream << this->PrevBlockHash << this->Timestamp << this->Version <<  this->MerkelRootHash << this->Version << this->DifficultyTarget << nonce;
-			
-			// Using my own hash
-			// Hash h;
-			//guess = h.makeHash(stream.str());
-			
-			// using sha256
-			SHA256 h;
-			guess = h(stream.str());
-
-			for (int i = 0; i < this->DifficultyTarget; i++) {
-				guess.at(i) = '0';
-			}
-		}
-		else {
-			Mined = true;
-			this->Nonce = nonce;
-			this->HashBlock = guess;
-			cout << "Block mined!" << endl;
-		}
-	}
-	*/
-	int attempts = 2000000;
+	
+	int attempts = 200000000;
 	for (int i = 0; i < attempts; i++) {
 		nonce++;
 		stringstream stream;
 		stream << this->PrevBlockHash << this->Timestamp << this->Version << this->MerkelRootHash << this->Version << this->DifficultyTarget << nonce;
 		SHA256 h;
 		guess = h(stream.str());
-
 		for (int i = 0; i < this->DifficultyTarget; i++) {
 			guess.at(i) = '0';
 		}
+
 
 		if (guess == refactoredHash) {
 
@@ -153,3 +141,58 @@ int Block::getBlockNumber() {
 bool Block::mined() {
 	return this->Mined;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// kasamas tol kol iskasamas
+	/*
+	while (!Mined) {
+		if (guess != refactoredHash) {
+			nonce++;
+
+			stringstream stream;
+			stream << this->PrevBlockHash << this->Timestamp << this->Version <<  this->MerkelRootHash << this->Version << this->DifficultyTarget << nonce;
+
+			// Using my own hash
+			// Hash h;
+			//guess = h.makeHash(stream.str());
+
+			// using sha256
+			SHA256 h;
+			guess = h(stream.str());
+
+			for (int i = 0; i < this->DifficultyTarget; i++) {
+				guess.at(i) = '0';
+			}
+		}
+		else {
+			Mined = true;
+			this->Nonce = nonce;
+			this->HashBlock = guess;
+			cout << "Block mined!" << endl;
+		}
+	}
+	*/

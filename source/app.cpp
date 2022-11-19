@@ -7,6 +7,7 @@ void App::Args(int argc, char** argv)
     this->argument = argv[1];
 };
 
+/*
 void App::run() {
     
     Generator Generator;
@@ -236,26 +237,31 @@ void App::run() {
 
     }
 
-    
-
-
 };
+*/
 
 void App::five() {
+
     Generator Generator;
 
+    // Users
     UserPool UserPool;
     UserPool.generateUserPool();
     vector<User> Users(UserPool.getUserPool());
-    vector<User> copyOfUsers = Users;
 
-
+    // Transactions
     TransactionPool TransactionPool;
     TransactionPool.generateTransactionPool(UserPool);
     vector<Transaction> Transactions(TransactionPool.getTransactionPool());
+
+    // Copies of users and transactions
+    vector<User> copyOfUsers = Users;
     vector<Transaction> copyOfTransactions = Transactions;
+
+    // Block transactions
     vector<Transaction> BlockTransactions;
 
+    // Block
     Block SingleBlock;
     vector<Block> BlockChain;
 
@@ -263,9 +269,11 @@ void App::five() {
     cout << "UserPool of 1.000[users] has been generated." << endl;
     cout << "TransactionPool 10.000[transactions] has been generated." << endl;
     cout << "--------------------------------------------------------------" << endl;
-    int amount; int gen = 0;
 
-    for (size_t i = 0; i < 5; i++) {
+    int number_of_candidates = 5;
+    vector<int> cand = Generator.generateRandomNumbers(number_of_candidates);
+
+    for (int s = 0; s < 5; s++) {
 
         // Sugeneruojamos transakcijos ir idedamos i nauja vektoriu
         for (int i = 0; i < 100; i++) {
@@ -277,72 +285,34 @@ void App::five() {
             Transactions.pop_back();
 
         }
+
         cout << "Transakciju poole liko: " << Transactions.size() << endl;
+        TransactionPool.validate(BlockTransactions);
 
-        // Genesis block
-        if (gen == 0) {
-            SingleBlock.createGenesis(BlockTransactions, d);
+        // Formatting a block
+        SingleBlock.createBlock(s+1, d, BlockTransactions, BlockChain);
+
+        //mining blocks
+        SingleBlock.mine();
+
+        if (SingleBlock.mined()) {
+            // updating users
+            Users.clear();
+            UserPool.updateUsers(BlockTransactions);
+            Users = UserPool.getUserPool();
+
+            // Adding block to chain
+            BlockChain.push_back(SingleBlock);
+
+            // Clearing objects
             BlockTransactions.clear();
+            SingleBlock.printBlock();
         }
 
-        // Regular block
-        if (gen > 0) {
-            SingleBlock.createBlock(BlockChain.back().getLastBlockHash(), d, BlockTransactions, gen);
-            BlockTransactions.clear();
-
-            
-        }
-
-        // Adding block to chain
-        BlockChain.push_back(SingleBlock);
-
-        gen++;
+        
     }
 
-    /*
-    // Random block randidates --------------------------------
-    int count = 0;
-    vector <int> pos;
-    do {
-        int random_position = Generator.generateInt(1, 5);
-        for (auto check : pos) {
-            if (check != random_position) {
-                pos.push_back(random_position);
-                count++;
-            }
-        }
-    } while (count < 5);
-    //------------------------------------------------------
-    */
-
-    vector<int> p = { 2, 3, 4, 1, 5 };
-    
-   /*
-        for (auto c : p) {
-            BlockChain.at(c).mine();
-            if (BlockChain.at(c).mined()) {
-
-                // updating users
-                Users.clear();
-                UserPool.updateUsers(BlockTransactions);
-                Users = UserPool.getUserPool();
-
-                // Adding block to chain
-                BlockChain.push_back(SingleBlock);
-
-                //BlockTransactions.clear();
-                SingleBlock.printBlock();
-
-                break;
-            }
-            else {
-                cout << "Blokas " << c << " per duota bandymu skaiciu nebuvo iskastas" << endl;
-            }
-        }
-   */
-    
-    
-
+    // end of program
 
     // commands
     string com;
@@ -352,6 +322,11 @@ void App::five() {
     while (com != "--ed") {
         cout << "Command line: ";
         cin >> com;
+
+        // help
+        if (com == "--help") {
+            help();
+        }
 
         // print blockchain
         if (com == "--bc") {
@@ -407,6 +382,17 @@ void App::five() {
 
 
     }
+}
+
+void App::help() {
+    cout << endl;
+    cout << "--ed  to kill terinal" << endl;
+    cout << "--bc  to print out BlockChain" << endl;
+    cout << "--up  to print out UserPool" << endl;
+    cout << "--tp  to print out TransactionPool" << endl;
+    cout << "--sb  to print out single block by it's hash with transactions" << endl;
+    cout << "--tr  to print out single transaction by it's ID" << endl;
+    cout << endl;
 }
 
 void App::stats(vector<User> Users, vector<User> copyOfUsers) {

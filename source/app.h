@@ -11,7 +11,7 @@
 #include "block.h"
 #include "generator.h"
 
-const int d = 63;
+const int d = 62;
 
 class App {
     private:
@@ -24,6 +24,7 @@ class App {
         void run();
         void five();
         void stats(vector<User> Users, vector<User> copyOfUsers);
+        void help();
 };
 
 // UserPool UserPool, vector<User> Users, 

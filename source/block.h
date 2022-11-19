@@ -31,7 +31,7 @@ public:
 	void printBlock();
 	void printBlockTransactions();
 
-	void createBlock(string previous, int difficulty, vector<Transaction> T, int nr);
+	void createBlock(int nr, int difficulty, vector<Transaction> T, vector<Block> bc);
 	void createGenesis(vector<Transaction> T, int difficulty);
 	void mine();
 
