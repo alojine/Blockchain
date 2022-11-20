@@ -24,8 +24,9 @@ void Block::printBlockTransactions() {
 void Block::createBlock(int nr, int difficulty, vector<Transaction> T, vector<Block> bc) {
 	if (bc.size() == 0) {
 		Hash hash;
+		SHA256 sha256;
 		this->Transactions = T;
-		this->PrevBlockHash = hash.makeHash("genesisBlock");
+		this->PrevBlockHash = sha256(this->MerkelRootHash + to_string(this->DifficultyTarget) + to_string(this->Timestamp) + to_string(this->DifficultyTarget));
 		this->Timestamp = time(nullptr);
 		this->Version = "1";
 		this->DifficultyTarget = difficulty;
@@ -105,14 +106,6 @@ void Block::mine() {
 }
 
 string Block::makeMerkelTreeHash(vector<Transaction> T) {
-	/*
-	stringstream stream;
-	Hash hash;
-	for (auto s : T) {
-		stream << s.getTransactionId();
-	}
-	return hash.makeHash(stream.str());
-	*/
 
 	Merkel Merkel(T);
 	return Merkel.getMerkelHash();
@@ -122,8 +115,9 @@ string Block::makeMerkelTreeHash(vector<Transaction> T) {
 string Block::makeBlockHash() {
 	stringstream stream;
 	Hash hash;
+	SHA256 sha256;
 	stream << this->PrevBlockHash << this->Timestamp << this->Version << this->MerkelRootHash << this->Version << this->DifficultyTarget;
-	return hash.makeHash(stream.str());
+	return sha256(stream.str());
 }
 
 string Block::getLastBlockHash() {

@@ -22,9 +22,7 @@ class App {
     public:
         void Args(int argc, char** argv);
         void run();
-        void five();
+
         void stats(vector<User> Users, vector<User> copyOfUsers);
         void help();
 };
-
-// UserPool UserPool, vector<User> Users, 
