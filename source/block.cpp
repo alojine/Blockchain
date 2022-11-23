@@ -26,7 +26,7 @@ void Block::createBlock(int nr, int difficulty, vector<Transaction> T, vector<Bl
 		Hash hash;
 		SHA256 sha256;
 		this->Transactions = T;
-		this->PrevBlockHash = sha256(this->MerkelRootHash + to_string(this->DifficultyTarget) + to_string(this->Timestamp) + to_string(this->DifficultyTarget));
+		this->PrevBlockHash = sha256("genesisblock1");
 		this->Timestamp = time(nullptr);
 		this->Version = "1";
 		this->DifficultyTarget = difficulty;
@@ -70,27 +70,23 @@ void Block::mine() {
 	int nonce = 0;
 	bool Mined = false;
 	string guess = makeBlockHash();
-	string hashCopy = this->getBlockHash();
 
-	string refactoredHash = this->HashBlock;
-	for (int i = 0; i < this->DifficultyTarget; i++) {
-		refactoredHash.at(i) = '0';
-	}
+	string refactoredHash;
+	refactoredHash.append(this->DifficultyTarget, '0');
 	
 	
 	int attempts = 200000000;
 	for (int i = 0; i < attempts; i++) {
+
+		// increasing nonce
 		nonce++;
-		stringstream stream;
+
+		// guessing hash
+		stringstream stream; SHA256 sha256;
 		stream << this->PrevBlockHash << this->Timestamp << this->Version << this->MerkelRootHash << this->Version << this->DifficultyTarget << nonce;
-		SHA256 h;
-		guess = h(stream.str());
-		for (int i = 0; i < this->DifficultyTarget; i++) {
-			guess.at(i) = '0';
-		}
+		guess = sha256(stream.str());
 
-
-		if (guess == refactoredHash) {
+		if (guess.substr(0, this->DifficultyTarget) == refactoredHash) {
 
 			this->Nonce = nonce;
 			this->HashBlock = guess;
